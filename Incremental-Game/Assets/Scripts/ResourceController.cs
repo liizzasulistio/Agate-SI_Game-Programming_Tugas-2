@@ -8,9 +8,16 @@ public class ResourceController : MonoBehaviour
     public Text ResourceDescription;
     public Text ResourceUpgradeCost;
     public Text ResourceUnlockCost;
+    public Button ResourceButton;
+    public Image ResourceImage;
 
     private ResourceConfig _config;
     private int _level = 1;
+
+    private void Start()
+    {
+        ResourceButton.onClick.AddListener(UpgradeLevel);
+    }
 
     public void SetConfig(ResourceConfig config)
     {
@@ -33,6 +40,21 @@ public class ResourceController : MonoBehaviour
     public double GetUnlockCost()
     {
         return _config.UnlockCost;
+    }
+
+    public void UpgradeLevel()
+    {
+        double upgradeCost = GetUpgradeCost();
+        if(GameManager.Instance.TotalGold < upgradeCost)
+        {
+            return;
+        }
+
+        GameManager.Instance.AddGold(-upgradeCost);
+        _level++;
+
+        ResourceUpgradeCost.text = $"Upgrade Cost\n{GetUpgradeCost()}";
+        ResourceDescription.text = $"{_config.Name} Lv. {_level}\n+{GetOutput().ToString("0")}";
     }
 
 }
